@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enigma da Mozileia</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background-color: #ffe6f2;
+            color: #d63384;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff0f5;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.3);
+            border: 3px dashed #ff69b4;
+        }
+        .quiz, .labirinto {
+            display: none;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #d63384;
+        }
+        canvas {
+            background-color: #ffccdd;
+            border: 3px solid #ff69b4;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feliz Aniversário, Mozileia! 💖🎀</h1>
+        <p>Bem-vinda ao seu enigma especial! Resolva o quiz e o puzzle para ganhar sua surpresa.</p>
+        <button onclick="startQuiz()">Começar Quiz</button>
+
+        <div class="quiz" id="quiz">
+            <h2>🎀 Quiz 🎀</h2>
+            <p>Pergunta 1: Qual foi o primeiro filme que assistimos juntos?</p>
+            <input type="text" id="q1"><br>
+            <p>Pergunta 2: Qual era a cor da primeira flor que eu te dei?</p>
+            <input type="text" id="q2"><br>
+            <button onclick="checkQuiz()">Finalizar Quiz</button>
+        </div>
+
+        <div class="labirinto" id="labirinto">
+            <h2>🌸 Labirinto da Mozileia 🌸</h2>
+            <p>Ajude a Mozileia a encontrar o Mozileio! 💕</p>
+            <canvas id="mazeCanvas" width="400" height="400"></canvas>
+            <p>Use as setas do teclado para se mover! 🏃‍♀️</p>
+        </div>
+
+        <div id="final" style="display: none;">
+            <h2>🎊 Parabéns, Mozileia! 🎊</h2>
+            <p>Você concluiu o enigma! Agora vem buscar sua surpresa! 💝</p>
+        </div>
+    </div>
+
+    <script>
+        function startQuiz() {
+            document.querySelector(".quiz").style.display = "block";
+        }
+
+        function checkQuiz() {
+            document.querySelector(".quiz").style.display = "none";
+            document.querySelector(".labirinto").style.display = "block";
+            startMaze();
+        }
+
+        function startMaze() {
+            const canvas = document.getElementById("mazeCanvas");
+            const ctx = canvas.getContext("2d");
+            const maze = [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,1,0,0,0,0,1],
+                [1,0,1,0,1,0,1,1,0,1],
+                [1,0,1,0,0,0,1,0,0,1],
+                [1,0,1,1,1,0,1,1,0,1],
+                [1,0,0,0,1,0,0,0,0,1],
+                [1,1,1,0,1,1,1,1,0,1],
+                [1,0,0,0,0,0,0,1,0,1],
+                [1,0,1,1,1,1,0,1,2,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ];
+            
+            let player = { x: 1, y: 1 };
+            const tileSize = 40;
+            
+            function drawMaze() {
+                for (let y = 0; y < maze.length; y++) {
+                    for (let x = 0; x < maze[y].length; x++) {
+                        if (maze[y][x] === 1) {
+                            ctx.fillStyle = "#ff69b4";
+                            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                        } else if (maze[y][x] === 2) {
+                            ctx.fillStyle = "#ffd700";
+                            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                        }
+                    }
+                }
+                ctx.fillStyle = "#0000ff";
+                ctx.fillRect(player.x * tileSize, player.y * tileSize, tileSize, tileSize);
+            }
+            
+            function movePlayer(dx, dy) {
+                let newX = player.x + dx;
+                let newY = player.y + dy;
+                if (maze[newY][newX] !== 1) {
+                    player.x = newX;
+                    player.y = newY;
+                    if (maze[newY][newX] === 2) {
+                        document.getElementById("labirinto").style.display = "none";
+                        document.getElementById("final").style.display = "block";
+                    }
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawMaze();
+            }
+            
+            window.addEventListener("keydown", function(e) {
+                if (e.key === "ArrowUp") movePlayer(0, -1);
+                if (e.key === "ArrowDown") movePlayer(0, 1);
+                if (e.key === "ArrowLeft") movePlayer(-1, 0);
+                if (e.key === "ArrowRight") movePlayer(1, 0);
+            });
+            
+            drawMaze();
+        }
+    </script>
+</body>
+</html>
